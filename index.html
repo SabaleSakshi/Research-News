@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Research and News Tool</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        max-width: 800px;
+        width: 100%;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        color: #667eea;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #research-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      label {
+        color: #333;
+        font-size: 1.1em;
+        font-weight: 500;
+      }
+
+      input[type="text"] {
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      input[type="text"]:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      #results {
+        margin-top: 30px;
+        padding: 25px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+        line-height: 1.8;
+        color: #333;
+        min-height: 100px;
+        max-height: 600px;
+        overflow-y: auto;
+        display: none;
+      }
+
+      #results:not(:empty) {
+        display: block;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      #results h3 {
+        color: #667eea;
+        margin-top: 25px;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      #results h3:first-child {
+        margin-top: 0;
+      }
+
+      .research-section,
+      .news-section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .paper-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border-left: 4px solid #667eea;
+      }
+
+      .paper-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      }
+
+      .paper-icon {
+        font-size: 1.8em;
+        flex-shrink: 0;
+      }
+
+      .paper-content {
+        flex: 1;
+      }
+
+      .paper-title {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05em;
+        display: block;
+        margin-bottom: 8px;
+        line-height: 1.4;
+        transition: color 0.2s ease;
+      }
+
+      .paper-title:hover {
+        color: #764ba2;
+        text-decoration: underline;
+      }
+
+      .paper-url {
+        color: #999;
+        font-size: 0.85em;
+        word-break: break-all;
+      }
+
+      .news-item {
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border-left: 4px solid #764ba2;
+      }
+
+      .news-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(118, 75, 162, 0.2);
+      }
+
+      .news-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .news-icon {
+        font-size: 1.5em;
+        flex-shrink: 0;
+      }
+
+      .news-title {
+        color: #333;
+        font-size: 1.15em;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .news-url {
+        display: inline-block;
+        color: #667eea;
+        text-decoration: none;
+        font-size: 0.9em;
+        margin-bottom: 12px;
+        word-break: break-all;
+        transition: color 0.2s ease;
+      }
+
+      .news-url:hover {
+        color: #764ba2;
+        text-decoration: underline;
+      }
+
+      .news-summary {
+        color: #555;
+        line-height: 1.7;
+        margin: 0;
+        text-align: justify;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .loading {
+        text-align: center;
+        color: #667eea;
+        font-style: italic;
+        padding: 20px;
+      }
+
+      /* Scrollbar styling */
+      #results::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #results::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      #results::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 10px;
+      }
+
+      #results::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 25px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+
+        button {
+          padding: 12px 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔍 Research and News Tool</h1>
+      <form id="research-form">
+        <label for="topic">Enter a topic to research:</label>
+        <input
+          type="text"
+          id="topic"
+          name="topic"
+          required
+          placeholder="e.g., Artificial Intelligence, Climate Change..."
+        />
+        <button type="submit">🚀 Search</button>
+      </form>
+      <div id="results"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("research-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const topic = document.getElementById("topic").value;
+          const resultsDiv = document.getElementById("results");
+
+          // Show loading state
+          resultsDiv.innerHTML =
+            '<div class="loading">🔄 Searching for information...</div>';
+          resultsDiv.style.display = "block";
+
+          try {
+            const response = await fetch(
+              "http://localhost:3000/research-news",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ topic }),
+              }
+            );
+            console.log("Response Status:", response);
+            const data = await response.json();
+
+            // Format the response text
+            const formattedResult = formatResponse(data.result);
+            resultsDiv.innerHTML = formattedResult;
+          } catch (error) {
+            resultsDiv.innerHTML =
+              '<div style="color: #e74c3c;">❌ Error: ' +
+              error.message +
+              "</div>";
+          }
+        });
+
+      function formatResponse(text) {
+        if (!text) return "<p>No results found.</p>";
+
+        const lines = text.split("\n");
+        let result = "";
+        let inResearchSection = false;
+        let inNewsSection = false;
+        let currentNewsItem = {};
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+
+          // Check for section headers
+          if (line.includes("### Research Papers")) {
+            if (inNewsSection) result += "</div>";
+            result +=
+              '<h3>📚 Research Papers</h3><div class="research-section">';
+            inResearchSection = true;
+            inNewsSection = false;
+            continue;
+          }
+
+          if (line.includes("### News")) {
+            if (inResearchSection) result += "</div>";
+            result += '<h3>📰 Latest News</h3><div class="news-section">';
+            inResearchSection = false;
+            inNewsSection = true;
+            continue;
+          }
+
+          // Parse research papers (format: - Title (url))
+          if (inResearchSection && line.startsWith("- ")) {
+            const content = line.substring(2);
+            const match = content.match(/(.*?)\s*\((https?:\/\/[^\)]+)\)/);
+
+            if (match) {
+              const title = match[1].trim();
+              const url = match[2];
+              result += `
+                <div class="paper-item">
+                  <div class="paper-icon">📄</div>
+                  <div class="paper-content">
+                    <a href="${url}" target="_blank" class="paper-title">${title}</a>
+                    <div class="paper-url">${url}</div>
+                  </div>
+                </div>`;
+            }
+          }
+
+          // Parse news items
+          if (inNewsSection) {
+            if (line.startsWith("- Title:")) {
+              // Save previous news item if exists
+              if (currentNewsItem.title) {
+                result += formatNewsItem(currentNewsItem);
+                currentNewsItem = {};
+              }
+              currentNewsItem.title = line.replace("- Title:", "").trim();
+            } else if (line.startsWith("URL:")) {
+              currentNewsItem.url = line.replace("URL:", "").trim();
+            } else if (line.startsWith("Short Summary:")) {
+              currentNewsItem.summary = line
+                .replace("Short Summary:", "")
+                .trim();
+            } else if (line.startsWith("-") && !line.startsWith("- Title:")) {
+              // Handle multi-line summaries or other content
+              if (currentNewsItem.summary) {
+                currentNewsItem.summary += " " + line.substring(1).trim();
+              }
+            }
+          }
+        }
+
+        // Add last news item
+        if (currentNewsItem.title) {
+          result += formatNewsItem(currentNewsItem);
+        }
+
+        // Close any open sections
+        if (inResearchSection || inNewsSection) {
+          result += "</div>";
+        }
+
+        return result || "<p>No results to display.</p>";
+      }
+
+      function formatNewsItem(item) {
+        return `
+          <div class="news-item">
+            <div class="news-header">
+              <span class="news-icon">🔗</span>
+              <h4 class="news-title">${item.title}</h4>
+            </div>
+            <a href="${item.url}" target="_blank" class="news-url">${
+          item.url
+        }</a>
+            <p class="news-summary">${
+              item.summary || "No summary available."
+            }</p>
+          </div>`;
+      }
+    </script>
+  </body>
+</html>
